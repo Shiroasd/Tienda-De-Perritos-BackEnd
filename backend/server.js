@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 // hola
 //de nuevoaaaaaaaa
 const {
-  DB_HOST = "10.0.158.183", // acá colocar la IP Privada EC2 DB
+  DB_HOST = "10.0.2.88", // acá colocar la IP Privada EC2 DB
   DB_USER = "alumno",
   DB_PASSWORD = "alumno123",
   DB_NAME = "tienda_perritos",
