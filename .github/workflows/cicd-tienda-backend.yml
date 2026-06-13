@@ -22,7 +22,7 @@ jobs:
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Login en Amazon ECR (runner)
+    - name: Login en Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build imagen Backend y push a ECR
@@ -32,18 +32,6 @@ jobs:
         docker tag tienda-backend:latest ${{ secrets.ECR_REPO_URL_BACKEND }}:latest
         docker push ${{ secrets.ECR_REPO_URL_BACKEND }}:latest
 
-    - name: Desplegar Backend vía SSM
+    - name: Desplegar Backend en ECS Fargate
       run: |
-        aws ssm send-command \
-          --instance-ids ${{ secrets.EC2_BACKEND_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --comment "Actualizar tienda-backend desde ECR" \
-          --parameters '{"commands":[
-            "set -e",
-            "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
-            "docker pull ${{ secrets.ECR_REPO_URL_BACKEND }}:latest",
-            "docker stop tienda-backend || true",
-            "docker rm tienda-backend || true",
-            "docker run -d --name tienda-backend -p 3001:3001 ${{ secrets.ECR_REPO_URL_BACKEND }}:latest"
-          ]}' \
-          --output text
+        aws ecs update-service --cluster Cluster-TiendaPerritos --service servicio-backend --force-new-deployment
