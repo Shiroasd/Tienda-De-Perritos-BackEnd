@@ -35,3 +35,4 @@ jobs:
     - name: Desplegar Backend en ECS Fargate
       run: |
         aws ecs update-service --cluster Cluster-TiendaPerritos --service servicio-backend --force-new-deployment
+        # Forzando actualización de pipeline
